@@ -6,6 +6,12 @@ use \Itp\Music\User;
 use \Itp\Music\ArtistQuery;
 use \Itp\Music\GenreQuery; 
 use \Itp\Music\Song;
+use \Symfony\Component\HttpFoundation\Session\Session;
+
+
+$session = new Session();
+$session->start(); 
+
 
 $aq = new ArtistQuery(); 
 $gq = new GenreQuery(); 
@@ -16,7 +22,12 @@ if(isset($_POST['savebutton'])){
     $genre_id = $_POST['genre'];
     $price = $_POST['price'];
     $song = new Song($title, $artist_id, $genre_id, $price);
-    $song->save();      
+    $song->save();  
+	
+	$session->getFlashBag()->add('insert-success', '<p> The song ' . $song->getTitle() . ' with an ID of ' . $song->getId() . ' was inserted successfully!</p>'); 
+	
+	header('Location: add-song.php'); 
+	exit;
 }
 
 ?>
@@ -31,13 +42,13 @@ if(isset($_POST['savebutton'])){
     </head>
     
     
-    <body></body>
-        <?php if(isset($_POST['savebutton'])){ ?>
-            <p>The song <?php echo $song->getTitle() ?>
-            with an ID of <?php echo $song->getId() ?>
-            was inserted successfully!</p>
-            <a href="add-song.php">Return to Add Songs</a>
-        <?php }else{ ?>
+    <body>
+		<?php foreach($session->getFlashBag()->get('insert-success') as $message) : ?>
+		<p>
+			<?php echo $message ?>
+		</p>
+		<?php endforeach ?>
+		
         <form method="post" name="songinput">
             Title: <input type="text" name="title">
             Artists: 
@@ -55,8 +66,6 @@ if(isset($_POST['savebutton'])){
             Price: <input type="text" name="price">
             <input type="submit" value="save" name="savebutton">
         </form>
-        <?php } ?>
-        
         <script src="/js/bootstrap.min.js"></script>
     </body>
 </html>
