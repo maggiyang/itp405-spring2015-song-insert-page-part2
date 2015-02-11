@@ -2,8 +2,6 @@
 
 namespace Itp\Music; 
 
-require_once __DIR__ . '/database.php';
-
 use \Itp\Base\Database;
 
 class Song extends Database{
